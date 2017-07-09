@@ -27,9 +27,12 @@ def genericRecord(aRecord):
     return {'name': aRecord['name'], 'id': aRecord['_id']['$oid']}
 
 # defaultIcon = 'http://maps.google.com/mapfiles/ms/icons/blue.png'
-defaultIcon = 'https://raw.githubusercontent.com/m-hemmings/MiscFiles/master/GoogleIcons/blue_MarkerI.png'
+# defaultIcon = 'https://raw.githubusercontent.com/m-hemmings/MiscFiles/master/GoogleIcons/blue_MarkerI.png'
 # edgeIcon = 'http://icons.veryicon.com/png/Internet%20%26%20Web/Round%20Edge%20Social/cloud%20app.png'
 prefix = 'http://uvic.planet-ignite.net:9001/core/media/'
+defaultIcon = prefix + "nicubunu-Callout-rectangle-center-300px.png"
+# defaultIcon = prefix + "nicubunu-Callout-rectangle-left-300px.png"
+# defaultIcon = prefix + "nicubunu-Callout-rectangle-right-300px.png"
 # edgeIcon = prefix + '02-512.png'
 # edgeIcon = prefix + '127-512.png'
 # edgeIcon = prefix + 'Network_Icon.png'
