@@ -78,6 +78,7 @@ def eventRecord(anEvent):
         record['host'] = getLatLng(anEvent['host'])
         if record['type'] == 'monitor_indicator':
             record['target'] = getLatLng(anEvent['target'])
+            record['target_name'] = anEvent['target_name']
     return record
 
 
