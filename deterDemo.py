@@ -30,14 +30,14 @@ def genericRecord(aRecord):
 # defaultIcon = 'https://raw.githubusercontent.com/m-hemmings/MiscFiles/master/GoogleIcons/blue_MarkerI.png'
 # edgeIcon = 'http://icons.veryicon.com/png/Internet%20%26%20Web/Round%20Edge%20Social/cloud%20app.png'
 prefix = 'http://uvic.planet-ignite.net:9001/core/media/'
-defaultIcon = prefix + "nicubunu-Callout-rectangle-center-300px.png"
+defaultIcon = prefix + "ixp-icon.png"
 # defaultIcon = prefix + "nicubunu-Callout-rectangle-left-300px.png"
 # defaultIcon = prefix + "nicubunu-Callout-rectangle-right-300px.png"
 # edgeIcon = prefix + '02-512.png'
 # edgeIcon = prefix + '127-512.png'
 # edgeIcon = prefix + 'Network_Icon.png'
 # edgeIcon = prefix + 'liberty-global-icon-network.png'
-edgeIcon = prefix + 'networking.png'
+edgeIcon = prefix + 'edge-network.png'
 
 def getIcon(aNode):
     if not 'icon' in aNode: return defaultIcon
