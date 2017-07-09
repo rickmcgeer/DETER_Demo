@@ -2108,6 +2108,7 @@ mapevents = [
     },
     "ts": 27.5,
     "type": "host_health",
+    "host_name" = 'UW',
     "host": [
       -123.00551852316684,
       47.77895010366551
@@ -2161,6 +2162,7 @@ mapevents = [
     },
     "ts": 29.5,
     "type": "host_health",
+    "host_name" = 'UW',
     "host": [
       -123.00551852316684,
       47.77895010366551
@@ -2218,6 +2220,7 @@ mapevents = [
     },
     "ts": 31.5,
     "type": "host_health",
+    "host_name" = 'UW',
     "host": [
       -123.00551852316684,
       47.77895010366551
@@ -2357,6 +2360,7 @@ mapevents = [
     },
     "ts": 65.5,
     "type": "host_health",
+    "host_name" = 'Cornell',
     "host": [
       -84.35022783447162,
       42.533932119797136
@@ -2410,6 +2414,7 @@ mapevents = [
     },
     "ts": 67.5,
     "type": "host_health",
+    "host_name" = 'Cornell',
     "host": [
       -84.35022783447162,
       42.533932119797136

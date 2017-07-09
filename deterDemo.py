@@ -64,6 +64,10 @@ def eventRecord(anEvent):
     elif (record['type'] == 'host_health'):
         record['host'] = getLatLng(anEvent['host'])
         record['health'] = anEvent['health']
+        if 'host_name' in anEvent:
+            record['host_name'] = anEvent['host_name']
+        if 'host_id' in anEvent:
+            record['host_id'] = anEvent['host_id']
     elif (record['type'] in set(['monitor_start', 'monitor_stop', 'monitor_indicator'])):
         record['host'] = getLatLng(anEvent['host'])
         if record['type'] == 'monitor_indicator':
@@ -96,14 +100,15 @@ def loadBody(nodes, hops, mapevents):
     citiesData['mapevents'] = [eventRecord(anEvent) for anEvent in mapevents]
     healths = [record for record in citiesData['mapevents'] if record['type'] == 'host_health']
     healths.sort(cmp = cmpPos)
-    lngLat = healths[0]['host']
-    healths[0]['host_id'] = 'added_host0'
+    noIDs = [health for health in healths if  not 'host_id' in health]
     count = 0
-    for health in healths[1:]:
-        if cmpLngLat(health['host'], lngLat) != 0:
-            lngLat = health['host']
+    for noID in noIDs:
+        matching = [health in healths if cmpLngLat(health['host'], noID['host']) == 0 and 'host_id' in health]
+        if len(matching) > 0:
+            noID['host_id'] = matching[0]['host_id']
+        else:
+            noID['host_id'] = 'addedID%d' % count
             count += 1
-        health['host_id'] = 'added_host%d' % count
     monitors = [record for record in citiesData['mapevents'] if record['type'] in set(['monitor_start', 'monitor_stop', 'monitor_indicator'])]
     for monitor in monitors:
         for node in citiesData['nodes']:
