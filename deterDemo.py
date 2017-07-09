@@ -92,6 +92,10 @@ def cmpLngLat(ll1, ll2):
 def cmpPos(health1, health2):
     return cmpLngLat(health1['host'], health2['host'])
 
+def matchWithID(host, noID):
+    if 'host_id' not in host: return False
+    return positionEqual(host['host'], noID['host'])
+
 # load the db
 
 def loadBody(nodes, hops, mapevents):
@@ -103,7 +107,7 @@ def loadBody(nodes, hops, mapevents):
     noIDs = [health for health in healths if  not 'host_id' in health]
     count = 0
     for noID in noIDs:
-        matching = [health in healths if cmpLngLat(health['host'], noID['host']) == 0 and 'host_id' in health]
+        matching = [health for health in healths if matchWithID(health, noID)]
         if len(matching) > 0:
             noID['host_id'] = matching[0]['host_id']
         else:
