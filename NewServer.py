@@ -26,14 +26,16 @@ reload()
 # calls.  reload the DB
 #
 
-
+@app.route('/reload')
 def reload():
     from newData import hops, mapevents, nodes
     loadBody(nodes, hops, mapevents)
     return 'Done!'
+@app.route('/reload/debug')
 def reloadDebug():
     from newData import hops, mapevents, nodes
     loadBody(nodes, hops, mapevents)
+    return json.dumps({nodes: nodes, hops:hops, mapevents:mapevents, processed:citiesData})
 
 
 
