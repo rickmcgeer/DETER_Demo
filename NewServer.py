@@ -19,24 +19,25 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 
 from deterDemo import citiesData, loadBody
 
-# load on initialization
-reload()
 
 #
 # calls.  reload the DB
 #
 
 @app.route('/reload')
-def reload():
+def reloadData():
     from newData import hops, mapevents, nodes
     loadBody(nodes, hops, mapevents)
     return 'Done!'
+
 @app.route('/reload/debug')
-def reloadDebug():
+def reloadDataDebug():
     from newData import hops, mapevents, nodes
     loadBody(nodes, hops, mapevents)
     return json.dumps({nodes: nodes, hops:hops, mapevents:mapevents, processed:citiesData})
 
+# load on initialization
+reloadData()
 
 
 
