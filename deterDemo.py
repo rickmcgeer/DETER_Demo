@@ -73,6 +73,7 @@ def eventRecord(anEvent):
     elif (record['type'] == 'host_health'):
         record['host'] = getLatLng(anEvent['host'])
         record['health'] = anEvent['health']
+        record['host_name'] = '--'
         if 'host_name' in anEvent:
             record['host_name'] = anEvent['host_name']
         if 'host_id' in anEvent:
@@ -81,7 +82,7 @@ def eventRecord(anEvent):
         record['host'] = getLatLng(anEvent['host'])
         if record['type'] == 'monitor_indicator':
             record['target'] = getLatLng(anEvent['target'])
-            record['target_name'] = anEvent['target_name']
+            record['target_name'] = '--'
     return record
 
 
@@ -108,27 +109,41 @@ def matchWithID(host, noID):
 
 # load the db
 
-def loadBody(nodes, hops, mapevents):
+def loadBody(nodes, hops, mapevents, addedCities):
     citiesData['nodes'] = [nodeRecord(node) for node in nodes]
     citiesData['hops'] = [hopRecord(hop) for hop in hops]
     citiesData['mapevents'] = [eventRecord(anEvent) for anEvent in mapevents]
     healths = [record for record in citiesData['mapevents'] if record['type'] == 'host_health']
     healths.sort(cmp = cmpPos)
     noIDs = [health for health in healths if  not 'host_id' in health]
+    for noID in noIDs:
+        for city in addedCities:
+            if positionEqual(city, noID['host']):
+                noID['host_id'] = city['host_id']
+                noID['host_name'] = city['host_name']
+    noIDs = [health for health in healths if  not 'host_id' in health]
+
     count = 0
     for noID in noIDs:
         matching = [health for health in healths if matchWithID(health, noID)]
         if len(matching) > 0:
             noID['host_id'] = matching[0]['host_id']
+            noID['host_name'] = matching[0]['host_name']
         else:
-            noID['host_id'] = 'addedID%d' % count
+            noID['host_id'] = noID['host_name'] = 'addedID%d' % count
             count += 1
     monitors = [record for record in citiesData['mapevents'] if record['type'] in set(['monitor_start', 'monitor_stop', 'monitor_indicator'])]
     for monitor in monitors:
         for node in citiesData['nodes']:
-            if (cmpLngLat(node, monitor['host'])):
+            if (cmpLngLat(node, monitor['host']) == 0):
                 monitor['host_name'] = node['name']
                 monitor['host_id'] = node['id']
+    monitors = [record for record in citiesData['mapevents'] if record['type'] == 'monitor_indicator']
+    for monitor in monitors:
+        for health in healths:
+            if (cmpLngLat(monitor['target'], health['host']) == 0):
+                if 'host_name' in health: monitor['target_name'] = health['host_name']
+
     citiesData['mapevents'].sort(key=lambda event: event['ts'])
 
 

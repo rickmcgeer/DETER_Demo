@@ -27,14 +27,16 @@ from deterDemo import citiesData, loadBody
 @app.route('/reload')
 def reloadData():
     from newData import hops, mapevents, nodes
-    loadBody(nodes, hops, mapevents)
+    from addedCities import addedCities
+    loadBody(nodes, hops, mapevents, addedCities)
     return 'Done!'
 
 @app.route('/reload/debug')
 def reloadDataDebug():
     from newData import hops, mapevents, nodes
-    loadBody(nodes, hops, mapevents)
-    return json.dumps({nodes: nodes, hops:hops, mapevents:mapevents, processed:citiesData})
+    from addedCities import addedCities
+    loadBody(nodes, hops, mapevents, addedCities)
+    return json.dumps({nodes: nodes, hops:hops, mapevents:mapevents, addedCities:addedCities, processed:citiesData})
 
 # load on initialization
 reloadData()
