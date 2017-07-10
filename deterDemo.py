@@ -46,7 +46,12 @@ def getIcon(aNode):
     return aNode['icon']
 
 def nodeRecord(node):
-    record = getLatLng(node['coordinates'])
+    if 'icon-coords' in node:
+        record = getLatLng(node['icon-coords'])
+        record['icon-coords'] = getLatLng(node['icon-coords'])
+    else:
+        record = getLatLng(node['coordinates'])
+    record['coordinates'] = getLatLng(node['coordinates'])
     record['icon'] = getIcon(node)
     record['id'] = node['_id']['$oid']
     record['name'] = node['name']
