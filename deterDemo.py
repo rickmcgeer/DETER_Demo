@@ -155,7 +155,8 @@ def getEventRecords(eventStream, citiesData, addedCities):
         for health in healths:
             if (cmpLngLat(monitor['target'], health['host']) == 0):
                 if 'host_name' in health: monitor['target_name'] = health['host_name']
-    return evStream.sort(key=lambda event: event['ts'])
+    evStream.sort(key=lambda event: event['ts'])
+    return evStream
     
 
 
