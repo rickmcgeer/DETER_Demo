@@ -84,8 +84,8 @@ def eventRecord(anEvent):
         record['host'] = getLatLng(anEvent['host'])
         record['health'] = anEvent['health']
         record['host_name'] = '--'
-        if 'host_name' in anEvent:
-            record['host_name'] = anEvent['host_name']
+        if 'name' in anEvent:
+            record['host_name'] = anEvent['name']
         if 'host_id' in anEvent:
             record['host_id'] = anEvent['host_id']
     elif (record['type'] in set(['monitor_start', 'monitor_stop', 'monitor_indicator'])):
@@ -137,12 +137,12 @@ def getEventRecords(eventStream, citiesData, addedCities):
     evStream = [eventRecord(anEvent) for anEvent in eventStream]
     healths = [record for record in evStream if record['type'] == 'host_health']
     healths.sort(cmp = cmpPos)
-    noIDs = [health for health in healths if  not 'host_id' in health]
-    for noID in noIDs:
+    noNames = [health for health in healths if  health['host_name'] == '--']
+    for noName in noNames:
         for city in addedCities:
-            if positionEqual(city, noID['host']):
-                noID['host_id'] = city['host_id']
-                noID['host_name'] = city['host_name']
+            if positionEqual(city, noName['host']):
+                noName['host_id'] = city['host_id']
+                noName['host_name'] = city['host_name']
     monitorTypes = set(['monitor_start', 'monitor_stop', 'monitor_indicator'])
     monitors = [record for record in evStream if record['type'] in monitorTypes and 'host_name' not in record]
     for monitor in monitors:
