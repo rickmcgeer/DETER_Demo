@@ -166,7 +166,7 @@ def getEventRecords(eventStream, citiesData, addedCities):
 def loadBody(nodes, hops, mapevents, addedCities):
     citiesData['nodes'] = [nodeRecord(node) for node in nodes]
     citiesData['hops'] = [hopRecord(hop) for hop in hops]
-    mappedevents = []
+    mappedevents = [[]]
     for eventStream in mapevents:
         evStream = getEventRecords(eventStream, citiesData, addedCities)
         mappedevents.append(evStream)
