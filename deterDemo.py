@@ -67,10 +67,15 @@ def hopRecord(aHop):
     record['end'] = getLatLng(aHop['dcoord'])
     return record
 
-
+randomCount = 0
 
 def eventRecord(anEvent):
-    record = {'id': anEvent['_id']['$oid']}
+    global randomCount
+    if '_id' in anEvent:
+        record = {'id': anEvent['_id']['$oid']}
+    else:
+        record = {'id':'randomeventID%d' % randomCount}
+        randomCount += 1
     record['ts'] = anEvent['ts']
     record['type'] = anEvent['type']
     if (record['type'] == 'attack_path'):
@@ -85,9 +90,13 @@ def eventRecord(anEvent):
             record['host_id'] = anEvent['host_id']
     elif (record['type'] in set(['monitor_start', 'monitor_stop', 'monitor_indicator'])):
         record['host'] = getLatLng(anEvent['host'])
+        if 'host_name' in anEvent:
+            record['host_name'] = anEvent['host_name']
         if record['type'] == 'monitor_indicator':
             record['target'] = getLatLng(anEvent['target'])
-            record['target_name'] = '--'
+            if 'target_name' in anEvent:
+                record['target_name'] = anEvent['target_name']
+
     return record
 
 
@@ -112,22 +121,7 @@ def matchWithID(host, noID):
     if 'host_id' not in host: return False
     return positionEqual(host['host'], noID['host'])
 
-# load the db
-
-def loadBody(nodes, hops, mapevents, addedCities):
-    citiesData['nodes'] = [nodeRecord(node) for node in nodes]
-    citiesData['hops'] = [hopRecord(hop) for hop in hops]
-    citiesData['mapevents'] = [eventRecord(anEvent) for anEvent in mapevents]
-    healths = [record for record in citiesData['mapevents'] if record['type'] == 'host_health']
-    healths.sort(cmp = cmpPos)
-    noIDs = [health for health in healths if  not 'host_id' in health]
-    for noID in noIDs:
-        for city in addedCities:
-            if positionEqual(city, noID['host']):
-                noID['host_id'] = city['host_id']
-                noID['host_name'] = city['host_name']
-    noIDs = [health for health in healths if  not 'host_id' in health]
-
+def oldCode():
     count = 0
     for noID in noIDs:
         matching = [health for health in healths if matchWithID(health, noID)]
@@ -137,18 +131,46 @@ def loadBody(nodes, hops, mapevents, addedCities):
         else:
             noID['host_id'] = noID['host_name'] = 'addedID%d' % count
             count += 1
-    monitors = [record for record in citiesData['mapevents'] if record['type'] in set(['monitor_start', 'monitor_stop', 'monitor_indicator'])]
+
+
+def getEventRecords(eventStream, citiesData, addedCities):
+    evStream = [eventRecord(anEvent) for anEvent in eventStream]
+    healths = [record for record in evStream if record['type'] == 'host_health']
+    healths.sort(cmp = cmpPos)
+    noIDs = [health for health in healths if  not 'host_id' in health]
+    for noID in noIDs:
+        for city in addedCities:
+            if positionEqual(city, noID['host']):
+                noID['host_id'] = city['host_id']
+                noID['host_name'] = city['host_name']
+    monitorTypes = set(['monitor_start', 'monitor_stop', 'monitor_indicator'])
+    monitors = [record for record in evStream if record['type'] in monitorTypes and 'host_name' not in record]
     for monitor in monitors:
         for node in citiesData['nodes']:
             if (cmpLngLat(node, monitor['host']) == 0):
                 monitor['host_name'] = node['name']
                 monitor['host_id'] = node['id']
-    monitors = [record for record in citiesData['mapevents'] if record['type'] == 'monitor_indicator']
+    monitors = [record for record in evStream if record['type'] == 'monitor_indicator' and 'target_name' not in record]
     for monitor in monitors:
         for health in healths:
             if (cmpLngLat(monitor['target'], health['host']) == 0):
                 if 'host_name' in health: monitor['target_name'] = health['host_name']
+    return evStream.sort(key=lambda event: event['ts'])
+    
 
-    citiesData['mapevents'].sort(key=lambda event: event['ts'])
+
+
+# load the db
+
+def loadBody(nodes, hops, mapevents, addedCities):
+    citiesData['nodes'] = [nodeRecord(node) for node in nodes]
+    citiesData['hops'] = [hopRecord(hop) for hop in hops]
+    mappedevents = []
+    for eventStream in mapevents:
+        evStream = getEventRecords(eventStream, citiesData, addedCities)
+        mappedevents.append(evStream)
+    citiesData['mapevents'] = mappedevents
+
+    
 
 
